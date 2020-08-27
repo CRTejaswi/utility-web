@@ -17,11 +17,14 @@ Start-PodeServer {
     }
 }
 ```
-Downloads lyrics of songs & writes to page. <sup>[BROKEN]</sup><br>
+Downloads lyrics of songs & writes to page. <br>
+
+- [ ] Display results in page instead of returning JSON object, and clean the output. <br>
+
 ```powershell
 # .\server.ps1
 # ...
-Add-PodePage -Name 'lyrics' -ScriptBlock {
+Add-PodeRoute -Method Get -Path '/lyrics' -ScriptBlock {
     $Url='https://crtejaswi.github.io/api/songs2.json'
     $LyricsUrl = 'https://www.azlyrics.com/lyrics'
     $entries = Invoke-RestMethod $Url
@@ -42,9 +45,6 @@ Add-PodePage -Name 'lyrics' -ScriptBlock {
             $lyrics[$title] += ($response.allElements | where {$_.class -match 'container main-page'}).innerText
         }
     }
-    Write-PodeViewResponse -Path 'lyrics' -Data @{
-        Keys = $lyrics.keys
-        Values = $lyrics.values
-    }
+    Write-PodeJsonResponse -Value $lyrics
 }
 ```

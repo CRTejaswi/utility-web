@@ -3,7 +3,7 @@ Start-PodeServer {
     Add-PodeRoute -Method Get -Path '/' -ScriptBlock {
         Write-PodeJsonResponse -Value @{ 'value' = 'Hello, world!' }
     }
-    Add-PodePage -Name 'lyrics' -ScriptBlock {
+    Add-PodeRoute -Method Get -Path '/lyrics' -ScriptBlock {
         $Url='https://crtejaswi.github.io/api/songs2.json'
         $LyricsUrl = 'https://www.azlyrics.com/lyrics'
         $entries = Invoke-RestMethod $Url
@@ -24,10 +24,6 @@ Start-PodeServer {
                 $lyrics[$title] += ($response.allElements | where {$_.class -match 'container main-page'}).innerText
             }
         }
-        Write-PodeViewResponse -Path 'lyrics' -Data @{
-            Keys = $lyrics.keys
-            Values = $lyrics.values
-        }
+        Write-PodeJsonResponse -Value $lyrics
     }
-
 }
